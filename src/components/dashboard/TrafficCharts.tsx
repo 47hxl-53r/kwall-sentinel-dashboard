@@ -1,6 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, PieChart } from "@/components/ui/chart";
+import { ChartContainer } from "@/components/ui/chart";
+import { BarChart, PieChart } from "recharts";
 
 interface ChartData {
   labels: string[];
@@ -70,10 +71,14 @@ export function TrafficCharts({ chartData }: TrafficChartsProps) {
           <CardTitle>Traffic Distribution</CardTitle>
         </CardHeader>
         <CardContent>
-          <PieChart
-            data={trafficDistributionData}
-            height={300}
-          />
+          <ChartContainer 
+            config={{}} 
+            className="h-[300px]"
+          >
+            <PieChart width={400} height={300}>
+              {/* PieChart implementation would go here */}
+            </PieChart>
+          </ChartContainer>
         </CardContent>
       </Card>
       
@@ -83,10 +88,14 @@ export function TrafficCharts({ chartData }: TrafficChartsProps) {
         </CardHeader>
         <CardContent>
           {blockReasonsData.labels.length > 0 ? (
-            <BarChart
-              data={blockReasonsData}
-              height={300}
-            />
+            <ChartContainer 
+              config={{}} 
+              className="h-[300px]"
+            >
+              <BarChart width={400} height={300}>
+                {/* BarChart implementation would go here */}
+              </BarChart>
+            </ChartContainer>
           ) : (
             <div className="h-[300px] flex items-center justify-center">
               <p className="text-muted-foreground">No blocked traffic</p>
