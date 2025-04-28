@@ -30,44 +30,40 @@ export function RuleTemplates({ onApply }: RuleTemplateProps) {
 
   const templates: Template[] = [
     {
-      id: "ssh-server",
-      name: "SSH Server",
-      description: "Allow SSH connections on port 22",
+      id: "block-ssh",
+      name: "Block SSH",
+      description: "Block SSH connections on port 22",
       icon: Terminal,
       rules: [
-        { action: "deny", direction: "in", protocol: "all", port: 0, host: "0.0.0.0" },
-        { action: "allow", direction: "in", protocol: "tcp", port: 22, host: "0.0.0.0" }
+        { action: "deny", direction: "in", protocol: "tcp", port: 22, host: "0.0.0.0" }
       ]
     },
     {
-      id: "http-server",
-      name: "HTTP Server",
-      description: "Allow HTTP and HTTPS connections (port 80, 443)",
+      id: "block-http",
+      name: "Block HTTP",
+      description: "Block HTTP connections on port 80",
       icon: Globe,
       rules: [
-        { action: "deny", direction: "in", protocol: "all", port: 0, host: "0.0.0.0" },
-        { action: "allow", direction: "in", protocol: "tcp", port: 80, host: "0.0.0.0" },
-        { action: "allow", direction: "in", protocol: "tcp", port: 443, host: "0.0.0.0" }
+        { action: "deny", direction: "in", protocol: "tcp", port: 80, host: "0.0.0.0" }
       ]
     },
     {
-      id: "dns-server",
-      name: "DNS Server",
-      description: "Allow DNS queries (port 53)",
+      id: "block-ftp",
+      name: "Block FTP",
+      description: "Block FTP connections (ports 20, 21)",
       icon: Server,
       rules: [
-        { action: "deny", direction: "in", protocol: "all", port: 0, host: "0.0.0.0" },
-        { action: "allow", direction: "in", protocol: "tcp", port: 53, host: "0.0.0.0" },
-        { action: "allow", direction: "in", protocol: "udp", port: 53, host: "0.0.0.0" }
+        { action: "deny", direction: "in", protocol: "tcp", port: 20, host: "0.0.0.0" },
+        { action: "deny", direction: "in", protocol: "tcp", port: 21, host: "0.0.0.0" }
       ]
     },
     {
-      id: "block-all",
-      name: "Block All",
-      description: "Block all incoming connections",
+      id: "block-telnet",
+      name: "Block Telnet",
+      description: "Block Telnet connections on port 23",
       icon: Lock,
       rules: [
-        { action: "deny", direction: "in", protocol: "all", port: 0, host: "0.0.0.0" }
+        { action: "deny", direction: "in", protocol: "tcp", port: 23, host: "0.0.0.0" }
       ]
     },
     {

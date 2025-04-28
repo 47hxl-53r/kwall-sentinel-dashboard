@@ -39,6 +39,4 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // Ensure static assets are properly handled
-  publicDir: 'public',
 }));

@@ -10,10 +10,17 @@ export async function login(username: string, password: string): Promise<User | 
   try {
     const response = await apiFetch<ApiResponse<User>>("/auth/login", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Prevent browser from showing default auth popup
+        "X-Requested-With": "XMLHttpRequest" 
+      },
       body: JSON.stringify({
         username,
         password,
       }),
+      // Make sure we don't include credentials that might trigger browser auth
+      credentials: "omit"
     });
 
     // Check for success response and handle the server's format where username is in response.user
