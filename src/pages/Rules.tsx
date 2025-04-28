@@ -7,16 +7,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { RuleTable } from "@/components/rules/RuleTable";
 import { RuleForm } from "@/components/rules/RuleForm";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getRules, manageRule } from "@/services/api";
+import { getRules, manageRule, getNextRuleId } from "@/services/api";
 import { toast } from "sonner";
 
 interface Rule {
-  id: string;
+  rule_id: number;
   action: "allow" | "deny";
-  direction: "inbound" | "outbound";
+  direction: "in" | "out";
   protocol: "tcp" | "udp" | "all";
   port: number;
   host: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 const Rules = () => {
@@ -24,17 +26,19 @@ const Rules = () => {
   const [editingRule, setEditingRule] = useState<Rule | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: rules = [], isLoading } = useQuery({
+  const { data: rulesData = { rules: [] }, isLoading } = useQuery({
     queryKey: ['rules'],
-    queryFn: async () => {
-      const response = await getRules();
-      return response.data || [];
-    },
+    queryFn: getRules,
   });
 
+  const rules = rulesData.rules || [];
+
   const mutation = useMutation({
-    mutationFn: async (variables: { operation: "add" | "update" | "delete"; rule: Partial<Rule> }) => {
-      return manageRule(variables.operation, variables.rule);
+    mutationFn: async (variables: { 
+      operation: "add" | "update" | "delete"; 
+      ruleData: Partial<Rule>
+    }) => {
+      return manageRule(variables.operation, variables.ruleData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['rules'] });
@@ -47,19 +51,45 @@ const Rules = () => {
     },
   });
 
+  const nextRuleIdQuery = useQuery({
+    queryKey: ['nextRuleId'],
+    queryFn: getNextRuleId,
+    enabled: false, // Don't run this query automatically
+  });
+
   const handleEdit = (rule: Rule) => {
     setEditingRule(rule);
     setIsDialogOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    mutation.mutate({ operation: "delete", rule: { id } });
+  const handleDelete = async (rule_id: number) => {
+    mutation.mutate({ 
+      operation: "delete", 
+      ruleData: { rule_id } 
+    });
   };
 
-  const handleSubmit = async (data: Omit<Rule, "id">) => {
+  const handleSubmit = async (data: Omit<Rule, "created_at" | "updated_at">) => {
     const operation = editingRule ? "update" : "add";
-    const rule = editingRule ? { ...data, id: editingRule.id } : data;
-    mutation.mutate({ operation, rule });
+    let ruleData = { ...data };
+    
+    // If adding a new rule, get the next rule_id
+    if (operation === "add") {
+      try {
+        const response = await nextRuleIdQuery.refetch();
+        if (response.data) {
+          ruleData.rule_id = response.data.rule_id;
+        }
+      } catch (error) {
+        toast.error("Failed to get next rule ID");
+        return;
+      }
+    }
+    
+    mutation.mutate({ 
+      operation, 
+      ruleData 
+    });
   };
 
   return (

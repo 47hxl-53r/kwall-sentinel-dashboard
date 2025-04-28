@@ -13,20 +13,22 @@ import { Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface Rule {
-  id: string;
+  rule_id: number;
   action: "allow" | "deny";
-  direction: "inbound" | "outbound";
+  direction: "in" | "out";
   protocol: "tcp" | "udp" | "all";
   port: number;
   host: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export function RuleTable({ rules, onEdit, onDelete }: { 
   rules: Rule[];
   onEdit: (rule: Rule) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: number) => void;
 }) {
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     try {
       onDelete(id);
       toast.success("Rule deleted successfully");
@@ -50,8 +52,8 @@ export function RuleTable({ rules, onEdit, onDelete }: {
         </TableHeader>
         <TableBody>
           {rules.map((rule) => (
-            <TableRow key={rule.id}>
-              <TableCell className={rule.action === 'allow' ? 'text-allow' : 'text-deny'}>
+            <TableRow key={rule.rule_id}>
+              <TableCell className={rule.action === 'allow' ? 'text-green-600' : 'text-red-600'}>
                 {rule.action}
               </TableCell>
               <TableCell>{rule.direction}</TableCell>
@@ -69,7 +71,7 @@ export function RuleTable({ rules, onEdit, onDelete }: {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleDelete(rule.id)}
+                  onClick={() => handleDelete(rule.rule_id)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

@@ -19,8 +19,9 @@ import {
 } from "@/components/ui/select";
 
 interface RuleFormData {
+  rule_id?: number;
   action: "allow" | "deny";
-  direction: "inbound" | "outbound";
+  direction: "in" | "out";
   protocol: "tcp" | "udp" | "all";
   port: number;
   host: string;
@@ -36,7 +37,7 @@ export function RuleForm({ initialData, onSubmit, onCancel }: RuleFormProps) {
   const form = useForm<RuleFormData>({
     defaultValues: initialData || {
       action: "allow",
-      direction: "inbound",
+      direction: "in",
       protocol: "tcp",
       port: 80,
       host: "",
@@ -81,8 +82,8 @@ export function RuleForm({ initialData, onSubmit, onCancel }: RuleFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="inbound">Inbound</SelectItem>
-                  <SelectItem value="outbound">Outbound</SelectItem>
+                  <SelectItem value="in">Inbound</SelectItem>
+                  <SelectItem value="out">Outbound</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

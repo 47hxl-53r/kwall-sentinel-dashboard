@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 
 // API base URL - would be configurable in production
@@ -77,16 +76,20 @@ export async function apiFetch<T>(
 
 // Rules
 export async function getRules() {
-  return apiFetch<ApiResponse<any[]>>("/rules");
+  return apiFetch<{ rules: any[] }>("/rules");
 }
 
-export async function manageRule(operation: "add" | "update" | "delete", rule: any) {
+export async function getNextRuleId() {
+  return apiFetch<{ rule_id: number }>("/rules/next_rule_id");
+}
+
+export async function manageRule(operation: "add" | "update" | "delete", ruleData: any) {
   return apiFetch<ApiResponse<any>>("/manage", {
     method: "POST",
     body: JSON.stringify({
       rule: {
         operation,
-        ...rule,
+        ...ruleData,
       },
     }),
   });
