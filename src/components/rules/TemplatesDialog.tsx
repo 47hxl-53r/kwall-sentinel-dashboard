@@ -36,8 +36,8 @@ export function TemplatesDialog({ isOpen, onOpenChange, onApplyTemplate }: Templ
       description: "Allow SSH connections on port 22",
       icon: Terminal,
       rules: [
-        { action: "deny", direction: "in", protocol: "all", port: 0, host: "" },
-        { action: "allow", direction: "in", protocol: "tcp", port: 22, host: "" }
+        { action: "deny", direction: "in", protocol: "all", port: 0, host: "0.0.0.0" },
+        { action: "allow", direction: "in", protocol: "tcp", port: 22, host: "0.0.0.0" }
       ]
     },
     {
@@ -46,9 +46,9 @@ export function TemplatesDialog({ isOpen, onOpenChange, onApplyTemplate }: Templ
       description: "Allow HTTP and HTTPS connections (port 80, 443)",
       icon: Globe,
       rules: [
-        { action: "deny", direction: "in", protocol: "all", port: 0, host: "" },
-        { action: "allow", direction: "in", protocol: "tcp", port: 80, host: "" },
-        { action: "allow", direction: "in", protocol: "tcp", port: 443, host: "" }
+        { action: "deny", direction: "in", protocol: "all", port: 0, host: "0.0.0.0" },
+        { action: "allow", direction: "in", protocol: "tcp", port: 80, host: "0.0.0.0" },
+        { action: "allow", direction: "in", protocol: "tcp", port: 443, host: "0.0.0.0" }
       ]
     },
     {
@@ -57,9 +57,9 @@ export function TemplatesDialog({ isOpen, onOpenChange, onApplyTemplate }: Templ
       description: "Allow DNS queries (port 53)",
       icon: Server,
       rules: [
-        { action: "deny", direction: "in", protocol: "all", port: 0, host: "" },
-        { action: "allow", direction: "in", protocol: "tcp", port: 53, host: "" },
-        { action: "allow", direction: "in", protocol: "udp", port: 53, host: "" }
+        { action: "deny", direction: "in", protocol: "all", port: 0, host: "0.0.0.0" },
+        { action: "allow", direction: "in", protocol: "tcp", port: 53, host: "0.0.0.0" },
+        { action: "allow", direction: "in", protocol: "udp", port: 53, host: "0.0.0.0" }
       ]
     },
     {
@@ -68,7 +68,7 @@ export function TemplatesDialog({ isOpen, onOpenChange, onApplyTemplate }: Templ
       description: "Block all incoming connections",
       icon: Lock,
       rules: [
-        { action: "deny", direction: "in", protocol: "all", port: 0, host: "" }
+        { action: "deny", direction: "in", protocol: "all", port: 0, host: "0.0.0.0" }
       ]
     },
     {
@@ -77,7 +77,7 @@ export function TemplatesDialog({ isOpen, onOpenChange, onApplyTemplate }: Templ
       description: "Allow all connections (not recommended)",
       icon: Unlock,
       rules: [
-        { action: "allow", direction: "in", protocol: "all", port: 0, host: "" }
+        { action: "allow", direction: "in", protocol: "all", port: 0, host: "0.0.0.0" }
       ]
     }
   ];
