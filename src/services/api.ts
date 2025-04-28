@@ -161,7 +161,7 @@ export async function getRealtimeLogs(limit: number = 5, includeServerLogs: bool
  */
 export async function clearLogs(options: ClearLogsOptions): Promise<ClearLogsResponse> {
   return apiFetch<ClearLogsResponse>("/logs/clear", {
-    method: "POST",
+    method: "DELETE", // Changed from POST to DELETE
     body: JSON.stringify(options)
   });
 }
