@@ -1,48 +1,49 @@
 
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { InfoIcon } from "lucide-react";
+import { RealTimeLogs } from "@/components/logs/RealTimeLogs";
+import { BlockedLogs } from "@/components/logs/BlockedLogs";
+import { LogStats } from "@/components/logs/LogStats";
+import { LogActions } from "@/components/logs/LogActions";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Logs = () => {
+  const [activeTab, setActiveTab] = useState("realtime");
+
   return (
     <Layout>
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
+        <div>
           <h2 className="text-3xl font-bold tracking-tight">Log Analysis</h2>
+          <p className="text-muted-foreground">
+            Monitor and analyze network traffic logs
+          </p>
         </div>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Logs Management</CardTitle>
-            <CardDescription>
-              View and analyze system logs
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Alert>
-              <InfoIcon className="h-4 w-4" />
-              <AlertTitle>Coming Soon</AlertTitle>
-              <AlertDescription>
-                The logs management functionality is currently under development. Check back later for features including:
-                <ul className="list-disc ml-6 mt-2">
-                  <li>Real-time log monitoring</li>
-                  <li>Blocked traffic analysis</li>
-                  <li>Usage statistics and visualizations</li>
-                  <li>Log search and filtering</li>
-                </ul>
-              </AlertDescription>
-            </Alert>
-            
-            <div className="flex justify-end">
-              <Button variant="outline" disabled>
-                View Available Logs
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="realtime" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="realtime">Real-Time Logs</TabsTrigger>
+            <TabsTrigger value="blocked">Blocked Traffic</TabsTrigger>
+            <TabsTrigger value="stats">Traffic Analysis</TabsTrigger>
+            <TabsTrigger value="management">Log Management</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="realtime" className="space-y-4">
+            <RealTimeLogs />
+          </TabsContent>
+          
+          <TabsContent value="blocked" className="space-y-4">
+            <BlockedLogs />
+          </TabsContent>
+          
+          <TabsContent value="stats" className="space-y-4">
+            <LogStats />
+          </TabsContent>
+          
+          <TabsContent value="management" className="space-y-4">
+            <LogActions />
+          </TabsContent>
+        </Tabs>
       </div>
     </Layout>
   );

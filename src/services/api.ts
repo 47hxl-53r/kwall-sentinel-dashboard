@@ -1,4 +1,11 @@
+
 import { toast } from "sonner";
+
+// Re-export specific APIs
+export * from "./logs-api";
+export * from "./config-api";
+export * from "./rules-api";
+export * from "./whitelist-api";
 
 // API base URL - When using Vite's proxy, we can use relative URLs
 const API_BASE_URL = "/api";
@@ -134,94 +141,4 @@ export async function apiFetch<T>(
     
     throw apiError;
   }
-}
-
-/**
- * API Functions for each endpoint
- */
-
-// Rules
-export async function getRules() {
-  return apiFetch<{ rules: any[] }>("/rules");
-}
-
-export async function getNextRuleId() {
-  return apiFetch<{ rule_id: number }>("/rules/next_rule_id");
-}
-
-export async function manageRule(operation: "add" | "update", ruleData: any) {
-  return apiFetch<ApiResponse<any>>("/manage", {
-    method: "POST",
-    body: JSON.stringify({
-      rule: {
-        operation,
-        ...ruleData,
-      },
-    }),
-  });
-}
-
-export async function deleteRule(ruleId: number) {
-  return apiFetch<ApiResponse<any>>(`/delete/${ruleId}`, {
-    method: "DELETE",
-  });
-}
-
-// Whitelist
-export async function getWhitelist() {
-  return apiFetch<ApiResponse<any[]>>("/whitelist");
-}
-
-export async function manageWhitelist(operation: "add" | "remove", ip_address: string) {
-  return apiFetch<ApiResponse<any>>("/whitelist/manage", {
-    method: "POST",
-    body: JSON.stringify({
-      operation,
-      ip_address,
-    }),
-  });
-}
-
-// Configuration
-export async function getConfig(type: "lockdown" | "stealth") {
-  return apiFetch<ApiResponse<{status: string}>>(`/config/${type}`);
-}
-
-export async function manageConfig(type: "lockdown" | "stealth", status: "on" | "off") {
-  return apiFetch<ApiResponse<any>>("/manage", {
-    method: "POST",
-    body: JSON.stringify({
-      config: {
-        [type]: status,
-      },
-    }),
-  });
-}
-
-// Logs
-export async function getRealtimeLogs(limit: number = 100, includeSrv: boolean = false) {
-  return apiFetch<RealtimeLogsResponse>(`/logs/realtime?limit=${limit}&srv=${includeSrv}`);
-}
-
-export async function getBlockedLogs(limit: number = 100) {
-  return apiFetch<BlockedLogsResponse>(`/logs/blocked?limit=${limit}`);
-}
-
-export async function getLogStats() {
-  return apiFetch<LogStats>("/logs/stats");
-}
-
-export async function clearLogs(options: { 
-  clearRealtime?: boolean; 
-  clearBlocked?: boolean; 
-  clearStats?: boolean;
-}) {
-  const params = new URLSearchParams();
-  if (options.clearRealtime) params.append("clear_realtime", "true");
-  if (options.clearBlocked) params.append("clear_blocked", "true");
-  if (options.clearStats) params.append("clear_stats", "true");
-  
-  return apiFetch<ClearLogsResponse>(`/logs/clear?${params.toString()}`, {
-    method: "DELETE",
-  });
 }
