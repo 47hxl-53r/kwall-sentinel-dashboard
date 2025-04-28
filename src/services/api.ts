@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 
 // API base URL - When using Vite's proxy, we can use relative URLs
@@ -14,6 +15,62 @@ export interface ApiResponse<T> {
 // API error interface
 export interface ApiError {
   status: number;
+  message: string;
+}
+
+// Log interfaces
+export interface LogEntry {
+  timestamp: string;
+  timestamp_ns: number;
+  src_ip: string;
+  dst_ip: string;
+  src_port: number;
+  dst_port: number;
+  protocol: string;
+  length: number;
+  action: "ALLOW" | "DENY";
+  reason: string;
+}
+
+export interface RealtimeLogsResponse {
+  logs: LogEntry[];
+  count: number;
+  server_logs_included: boolean;
+  total_logs_available: number;
+}
+
+export interface BlockedLogsResponse {
+  blocked_requests: LogEntry[];
+  total_blocked: number;
+}
+
+export interface LogStats {
+  stats: {
+    allowed: number;
+    blocked: number;
+    blocked_details: Array<{
+      reason: string;
+      count: number;
+    }>;
+  };
+  chart_data: {
+    labels: string[];
+    datasets: Array<{
+      label: string;
+      data: number[];
+      backgroundColor: string[];
+    }>;
+  };
+}
+
+export interface ClearLogsResponse {
+  status: string;
+  results: {
+    realtime_cleared: boolean;
+    blocked_cleared: boolean;
+    stats_cleared: boolean;
+    db_stats_cleared: boolean;
+  };
   message: string;
 }
 
@@ -144,15 +201,15 @@ export async function manageConfig(type: "lockdown" | "stealth", status: "on" | 
 
 // Logs
 export async function getRealtimeLogs(limit: number = 100, includeSrv: boolean = false) {
-  return apiFetch<ApiResponse<any>>(`/logs/realtime?limit=${limit}&srv=${includeSrv}`);
+  return apiFetch<RealtimeLogsResponse>(`/logs/realtime?limit=${limit}&srv=${includeSrv}`);
 }
 
 export async function getBlockedLogs(limit: number = 100) {
-  return apiFetch<ApiResponse<any>>(`/logs/blocked?limit=${limit}`);
+  return apiFetch<BlockedLogsResponse>(`/logs/blocked?limit=${limit}`);
 }
 
 export async function getLogStats() {
-  return apiFetch<ApiResponse<any>>("/logs/stats");
+  return apiFetch<LogStats>("/logs/stats");
 }
 
 export async function clearLogs(options: { 
@@ -165,7 +222,7 @@ export async function clearLogs(options: {
   if (options.clearBlocked) params.append("clear_blocked", "true");
   if (options.clearStats) params.append("clear_stats", "true");
   
-  return apiFetch<ApiResponse<any>>(`/logs/clear?${params.toString()}`, {
+  return apiFetch<ClearLogsResponse>(`/logs/clear?${params.toString()}`, {
     method: "DELETE",
   });
 }

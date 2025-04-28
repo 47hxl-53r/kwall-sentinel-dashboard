@@ -1,80 +1,23 @@
 
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { formatDistance } from "date-fns";
-
-// Mock data - would be fetched from API
-const recentLogs = [
-  {
-    id: "1",
-    timestamp: new Date(Date.now() - 1000 * 60 * 2),
-    src_ip: "192.168.1.105",
-    dst_ip: "192.168.1.1",
-    src_port: 49523,
-    dst_port: 443,
-    protocol: "TCP",
-    length: 1240,
-    action: "ALLOW",
-    reason: "Matched rule #5",
-  },
-  {
-    id: "2",
-    timestamp: new Date(Date.now() - 1000 * 60 * 5),
-    src_ip: "45.33.12.204",
-    dst_ip: "192.168.1.105",
-    src_port: 443,
-    dst_port: 49234,
-    protocol: "TCP",
-    length: 520,
-    action: "DENY",
-    reason: "Rate limiting",
-  },
-  {
-    id: "3",
-    timestamp: new Date(Date.now() - 1000 * 60 * 10),
-    src_ip: "192.168.1.105",
-    dst_ip: "8.8.8.8",
-    src_port: 53242,
-    dst_port: 53,
-    protocol: "UDP",
-    length: 64,
-    action: "ALLOW",
-    reason: "Matched rule #2",
-  },
-  {
-    id: "4",
-    timestamp: new Date(Date.now() - 1000 * 60 * 12),
-    src_ip: "192.168.1.105",
-    dst_ip: "23.64.122.50",
-    src_port: 49982,
-    dst_port: 443,
-    protocol: "TCP",
-    length: 1820,
-    action: "ALLOW",
-    reason: "Default outbound policy",
-  },
-  {
-    id: "5",
-    timestamp: new Date(Date.now() - 1000 * 60 * 15),
-    src_ip: "104.28.32.85",
-    dst_ip: "192.168.1.105",
-    src_port: 80,
-    dst_port: 58423,
-    protocol: "TCP",
-    length: 3240,
-    action: "ALLOW",
-    reason: "Matched rule #3",
-  },
-];
+import { formatDistanceToNow } from "date-fns";
+import { getRealtimeLogs } from "@/services/api";
+import { Loader2 } from "lucide-react";
 
 function getProtocolIcon(protocol: string) {
   switch (protocol) {
     case "TCP":
+    case "6":
+    case "2":
       return "🔒";
     case "UDP":
+    case "17":
       return "🛡️";
     case "ICMP":
+    case "1":
       return "⚠️";
     default:
       return "📡";
@@ -82,6 +25,31 @@ function getProtocolIcon(protocol: string) {
 }
 
 export function RecentActivity() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["realtimeLogs", 5, false],
+    queryFn: () => getRealtimeLogs(5, false),
+    refetchInterval: 5000, // Refresh every 5 seconds
+  });
+
+  const formatTimestamp = (timestamp: string) => {
+    try {
+      const date = new Date(timestamp);
+      return formatDistanceToNow(date, { addSuffix: true });
+    } catch (error) {
+      return timestamp;
+    }
+  };
+
+  const getProtocolDisplay = (protocol: string) => {
+    const protocolMap: Record<string, string> = {
+      "1": "ICMP",
+      "2": "TCP",
+      "6": "TCP",
+      "17": "UDP",
+    };
+    return protocolMap[protocol] || protocol;
+  };
+
   return (
     <Card className="col-span-1">
       <CardHeader>
@@ -89,32 +57,42 @@ export function RecentActivity() {
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[400px] rounded-md">
-          <div className="space-y-2">
-            {recentLogs.map((log) => (
-              <div key={log.id} className="log-row p-3 text-xs">
-                <div className="flex justify-between mb-1">
-                  <div className="font-mono text-muted-foreground">
-                    {formatDistance(log.timestamp, new Date(), { addSuffix: true })}
+          {isLoading ? (
+            <div className="flex justify-center items-center h-full">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : data?.logs && data.logs.length > 0 ? (
+            <div className="space-y-2">
+              {data.logs.map((log, index) => (
+                <div key={`${log.timestamp_ns}-${index}`} className="log-row p-3 text-xs">
+                  <div className="flex justify-between mb-1">
+                    <div className="font-mono text-muted-foreground">
+                      {formatTimestamp(log.timestamp)}
+                    </div>
+                    <Badge
+                      variant="outline"
+                      className={log.action === "ALLOW" ? "border-allow text-allow" : "border-deny text-deny"}
+                    >
+                      {log.action}
+                    </Badge>
                   </div>
-                  <Badge
-                    variant="outline"
-                    className={log.action === "ALLOW" ? "border-allow text-allow" : "border-deny text-deny"}
-                  >
-                    {log.action}
-                  </Badge>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <span className="protocol-icon">{getProtocolIcon(log.protocol)}</span> {getProtocolDisplay(log.protocol)}
+                    </div>
+                    <div className="font-mono">
+                      {log.src_ip}:{log.src_port} → {log.dst_ip}:{log.dst_port}
+                    </div>
+                  </div>
+                  <div className="mt-1 text-muted-foreground">{log.reason}</div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <span className="protocol-icon">{getProtocolIcon(log.protocol)}</span> {log.protocol}
-                  </div>
-                  <div>
-                    {log.src_ip}:{log.src_port} → {log.dst_ip}:{log.dst_port}
-                  </div>
-                </div>
-                <div className="mt-1 text-muted-foreground">{log.reason}</div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex justify-center items-center h-full text-muted-foreground">
+              No recent activity
+            </div>
+          )}
         </ScrollArea>
       </CardContent>
     </Card>
