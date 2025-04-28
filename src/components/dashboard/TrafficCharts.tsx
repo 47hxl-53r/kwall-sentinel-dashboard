@@ -112,7 +112,7 @@ export function TrafficCharts() {
                 <XAxis dataKey="time" label={{ value: "Seconds ago", position: "insideBottomRight", offset: -10 }} />
                 <YAxis yAxisId="left" orientation="left" stroke="hsl(var(--primary))" />
                 <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--secondary))" />
-                <Tooltip formatter={(value, name) => [name === "packets" ? `${value} packets` : `${(value / 1024).toFixed(2)} KB`, ""]} />
+                <Tooltip formatter={(value, name) => [name === "packets" ? `${value} packets` : `${Math.round(Number(value) / 1024).toFixed(2)} KB`, ""]} />
                 <Legend />
                 <Line yAxisId="left" type="monotone" dataKey="packets" stroke="hsl(var(--primary))" activeDot={{ r: 8 }} name="Packets" />
                 <Line yAxisId="right" type="monotone" dataKey="bytes" stroke="hsl(var(--secondary))" name="Bytes" />
