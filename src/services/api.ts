@@ -2,7 +2,6 @@
 import { toast } from "sonner";
 
 // Re-export specific APIs
-export * from "./logs-api";
 export * from "./config-api";
 export * from "./rules-api";
 export * from "./whitelist-api";
@@ -21,62 +20,6 @@ export interface ApiResponse<T> {
 // API error interface
 export interface ApiError {
   status: number;
-  message: string;
-}
-
-// Log interfaces
-export interface LogEntry {
-  timestamp: string;
-  timestamp_ns: number;
-  src_ip: string;
-  dst_ip: string;
-  src_port: number;
-  dst_port: number;
-  protocol: string;
-  length: number;
-  action: "ALLOW" | "DENY";
-  reason: string;
-}
-
-export interface RealtimeLogsResponse {
-  logs: LogEntry[];
-  count: number;
-  server_logs_included: boolean;
-  total_logs_available: number;
-}
-
-export interface BlockedLogsResponse {
-  blocked_requests: LogEntry[];
-  total_blocked: number;
-}
-
-export interface LogStats {
-  stats: {
-    allowed: number;
-    blocked: number;
-    blocked_details: Array<{
-      reason: string;
-      count: number;
-    }>;
-  };
-  chart_data: {
-    labels: string[];
-    datasets: Array<{
-      label: string;
-      data: number[];
-      backgroundColor: string[];
-    }>;
-  };
-}
-
-export interface ClearLogsResponse {
-  status: string;
-  results: {
-    realtime_cleared: boolean;
-    blocked_cleared: boolean;
-    stats_cleared: boolean;
-    db_stats_cleared: boolean;
-  };
   message: string;
 }
 

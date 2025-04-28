@@ -6,7 +6,6 @@ import {
   BarChart,
   Shield,
   List,
-  FileText,
   Settings,
   Home,
 } from "lucide-react";
@@ -26,11 +25,6 @@ const navItems = [
     title: "Whitelist",
     icon: List,
     href: "/whitelist",
-  },
-  {
-    title: "Logs",
-    icon: FileText,
-    href: "/logs",
   },
   {
     title: "Configuration",

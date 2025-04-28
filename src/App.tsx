@@ -13,7 +13,6 @@ import Dashboard from "./pages/Dashboard";
 import Rules from "./pages/Rules";
 import Whitelist from "./pages/Whitelist";
 import Config from "./pages/Config";
-import Logs from "./pages/Logs";
 import NotFound from "./pages/NotFound";
 
 // Create a client
@@ -41,7 +40,6 @@ const App = () => (
               <Route path="/rules" element={<Rules />} />
               <Route path="/whitelist" element={<Whitelist />} />
               <Route path="/config" element={<Config />} />
-              <Route path="/logs" element={<Logs />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </ToastProvider>
