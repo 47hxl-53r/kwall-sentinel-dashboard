@@ -7,7 +7,7 @@ import { WhitelistForm } from "@/components/whitelist/WhitelistForm";
 import { getWhitelist, manageWhitelist } from "@/services/whitelist-api";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { InfoCircle } from "lucide-react";
+import { Info } from "lucide-react";
 
 const Whitelist = () => {
   const queryClient = useQueryClient();
@@ -50,7 +50,7 @@ const Whitelist = () => {
         </div>
         
         <Alert className="bg-card border-primary/20">
-          <InfoCircle className="h-4 w-4" />
+          <Info className="h-4 w-4" />
           <AlertDescription>
             IP addresses in the whitelist will bypass all firewall rules and restrictions. 
             Only add trusted IP addresses that require unrestricted access to your network.
