@@ -2,15 +2,14 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, LayoutTemplate } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { RuleTable } from "@/components/rules/RuleTable";
 import { RuleForm } from "@/components/rules/RuleForm";
-import { RuleTemplates } from "@/components/rules/RuleTemplates";
+import { TemplatesDialog } from "@/components/rules/TemplatesDialog";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRules, manageRule, getNextRuleId, deleteRule, FirewallRule } from "@/services/rules-api";
 import { toast } from "sonner";
-import { Separator } from "@/components/ui/separator";
 
 // Use the FirewallRule type from rules-api.ts to ensure type compatibility
 type Rule = FirewallRule & {
@@ -19,6 +18,7 @@ type Rule = FirewallRule & {
 
 const Rules = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isTemplatesDialogOpen, setIsTemplatesDialogOpen] = useState(false);
   const [editingRule, setEditingRule] = useState<Rule | null>(null);
   const queryClient = useQueryClient();
 
@@ -132,6 +132,7 @@ const Rules = () => {
     // Refresh the rules list
     queryClient.invalidateQueries({ queryKey: ['rules'] });
     toast.success("Template applied successfully");
+    setIsTemplatesDialogOpen(false);
   };
 
   return (
@@ -139,10 +140,19 @@ const Rules = () => {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-3xl font-bold tracking-tight">Rule Management</h2>
-          <Button onClick={() => setIsDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Rule
-          </Button>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsTemplatesDialogOpen(true)}
+            >
+              <LayoutTemplate className="mr-2 h-4 w-4" />
+              Use Templates
+            </Button>
+            <Button onClick={() => setIsDialogOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Rule
+            </Button>
+          </div>
         </div>
 
         {isLoading ? (
@@ -156,10 +166,6 @@ const Rules = () => {
             onDelete={handleDelete}
           />
         )}
-        
-        <Separator className="my-8" />
-        
-        <RuleTemplates onApply={handleApplyTemplate} />
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent>
@@ -175,6 +181,13 @@ const Rules = () => {
             />
           </DialogContent>
         </Dialog>
+        
+        {/* Templates Dialog */}
+        <TemplatesDialog 
+          isOpen={isTemplatesDialogOpen}
+          onOpenChange={setIsTemplatesDialogOpen}
+          onApplyTemplate={handleApplyTemplate}
+        />
       </div>
     </Layout>
   );
