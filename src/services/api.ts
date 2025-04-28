@@ -1,8 +1,8 @@
 
 import { toast } from "sonner";
 
-// API base URL - would be configurable in production
-const API_BASE_URL = "http://localhost:9876/api";
+// API base URL - When using Vite's proxy, we can use relative URLs
+const API_BASE_URL = "/api";
 
 // API response interface
 export interface ApiResponse<T> {
@@ -17,18 +17,17 @@ export interface ApiError {
   message: string;
 }
 
-// Updated fetch options with proper CORS handling
+// Comprehensive fetch options for all API calls
 const fetchOptions: RequestInit = {
   credentials: "include", // Include cookies for session-based auth
   headers: {
     "Content-Type": "application/json",
+    "Accept": "application/json",
   },
-  // Adding mode: 'cors' explicitly
-  mode: 'cors',
 };
 
 /**
- * Generic API fetch function with error handling
+ * Generic API fetch function with enhanced error handling
  */
 export async function apiFetch<T>(
   endpoint: string,
@@ -44,27 +43,35 @@ export async function apiFetch<T>(
       },
     };
 
+    // Use relative URLs with the proxy
     const response = await fetch(`${API_BASE_URL}${endpoint}`, mergedOptions);
-
+    
     // Handle unauthorized
     if (response.status === 401) {
       window.location.href = "/login";
       throw new Error("Session expired. Please log in again.");
     }
 
-    const data = await response.json();
-
+    // Handle 404 and other status errors
     if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ 
+        message: `HTTP error ${response.status}: ${response.statusText}` 
+      }));
+      
       throw {
         status: response.status,
-        message: data.message || "An unknown error occurred",
+        message: errorData.message || "An unknown error occurred",
       };
     }
 
+    // Parse JSON response
+    const data = await response.json();
     return data;
   } catch (error) {
+    console.error("API Error:", error);
+    
+    // Format error for display and re-throwing
     const apiError = error as ApiError;
-    console.error("API Error:", apiError);
     
     // Show toast notification for errors
     toast.error(apiError.message || "Failed to connect to server");

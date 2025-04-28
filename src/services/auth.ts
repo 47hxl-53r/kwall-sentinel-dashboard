@@ -1,3 +1,4 @@
+
 import { apiFetch, ApiResponse } from "./api";
 import { toast } from "sonner";
 
@@ -7,7 +8,6 @@ export interface User {
 
 export async function login(username: string, password: string): Promise<User | null> {
   try {
-    // Make a real API call instead of using test credentials
     const response = await apiFetch<ApiResponse<User>>("/auth/login", {
       method: "POST",
       body: JSON.stringify({
