@@ -2,10 +2,24 @@
 import { apiFetch, ApiResponse } from "./api";
 
 /**
+ * Interface representing a firewall rule
+ */
+export interface FirewallRule {
+  rule_id?: number;
+  action: "allow" | "deny";
+  direction: "in" | "out";
+  protocol: "tcp" | "udp" | "all";
+  port: number;
+  host: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+/**
  * Gets the current firewall rules
  */
 export async function getRules() {
-  return apiFetch<{ rules: any[] }>("/rules");
+  return apiFetch<{ rules: FirewallRule[] }>("/rules");
 }
 
 /**
@@ -21,7 +35,7 @@ export async function getNextRuleId() {
  * @param operation Operation to perform ("add" or "update")
  * @param ruleData Rule data
  */
-export async function manageRule(operation: "add" | "update", ruleData: any) {
+export async function manageRule(operation: "add" | "update", ruleData: Partial<FirewallRule>) {
   return apiFetch<ApiResponse<any>>("/manage", {
     method: "POST",
     body: JSON.stringify({
@@ -41,5 +55,17 @@ export async function manageRule(operation: "add" | "update", ruleData: any) {
 export async function deleteRule(ruleId: number) {
   return apiFetch<ApiResponse<any>>(`/delete/${ruleId}`, {
     method: "DELETE",
+  });
+}
+
+/**
+ * Apply a set of rules (for templates)
+ * 
+ * @param rules Array of rules to apply
+ */
+export async function applyRuleTemplate(rules: FirewallRule[]) {
+  return apiFetch<ApiResponse<any>>("/rules/template", {
+    method: "POST",
+    body: JSON.stringify({ rules }),
   });
 }

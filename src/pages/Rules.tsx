@@ -6,9 +6,11 @@ import { Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { RuleTable } from "@/components/rules/RuleTable";
 import { RuleForm } from "@/components/rules/RuleForm";
+import { RuleTemplates } from "@/components/rules/RuleTemplates";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRules, manageRule, getNextRuleId, deleteRule } from "@/services/api";
 import { toast } from "sonner";
+import { Separator } from "@/components/ui/separator";
 
 interface Rule {
   rule_id: number;
@@ -106,6 +108,35 @@ const Rules = () => {
     });
   };
 
+  const handleApplyTemplate = async (templateRules: Omit<Rule, "rule_id" | "created_at" | "updated_at">[]) => {
+    // Process template rules sequentially
+    for (const ruleTemplate of templateRules) {
+      try {
+        // Get next rule ID
+        const response = await nextRuleIdQuery.refetch();
+        if (!response.data) {
+          toast.error("Failed to get next rule ID");
+          return;
+        }
+        
+        const ruleData = { 
+          ...ruleTemplate, 
+          rule_id: response.data.rule_id 
+        };
+        
+        // Add the rule
+        await mutation.mutationFn({ operation: "add", ruleData });
+      } catch (error) {
+        toast.error("Error applying template rule");
+        return;
+      }
+    }
+    
+    // Refresh the rules list
+    queryClient.invalidateQueries({ queryKey: ['rules'] });
+    toast.success("Template applied successfully");
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -128,6 +159,10 @@ const Rules = () => {
             onDelete={handleDelete}
           />
         )}
+        
+        <Separator className="my-8" />
+        
+        <RuleTemplates onApply={handleApplyTemplate} />
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent>
