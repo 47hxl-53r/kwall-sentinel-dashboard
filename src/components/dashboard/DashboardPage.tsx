@@ -4,6 +4,7 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { StatsOverview } from "./StatsOverview";
 import { RecentActivity } from "./RecentActivity";
 import { QuickActions } from "./QuickActions";
+import { TrafficCharts } from "./TrafficCharts";
 import { getLogStats } from "@/services/api";
 import { Loader2 } from "lucide-react";
 
@@ -39,6 +40,9 @@ export function DashboardPage() {
       ) : (
         <>
           <StatsOverview stats={logStats?.stats} />
+          
+          {/* Add TrafficCharts component here */}
+          <TrafficCharts chartData={logStats?.chart_data} />
           
           <div className="grid gap-4 md:grid-cols-2">
             <RecentActivity />
