@@ -5,7 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDistanceToNow } from "date-fns";
 import { getRealtimeLogs } from "@/services/api";
-import { Loader2 } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+interface RecentActivityProps {
+  refreshInterval?: number;
+}
 
 function getProtocolIcon(protocol: string) {
   switch (protocol) {
@@ -24,11 +30,12 @@ function getProtocolIcon(protocol: string) {
   }
 }
 
-export function RecentActivity() {
-  const { data, isLoading } = useQuery({
+export function RecentActivity({ refreshInterval = 5000 }: RecentActivityProps) {
+  const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["realtimeLogs", 5, false],
     queryFn: () => getRealtimeLogs(5, false),
-    refetchInterval: 5000, // Refresh every 5 seconds
+    refetchInterval: refreshInterval,
+    refetchOnWindowFocus: true,
   });
 
   const formatTimestamp = (timestamp: string) => {
@@ -50,10 +57,28 @@ export function RecentActivity() {
     return protocolMap[protocol] || protocol;
   };
 
+  const handleRefresh = async () => {
+    try {
+      await refetch();
+      toast.success("Activity logs refreshed");
+    } catch (error) {
+      toast.error("Failed to refresh activity logs");
+    }
+  };
+
   return (
     <Card className="col-span-1">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle>Recent Activity</CardTitle>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={handleRefresh}
+          disabled={isLoading || isRefetching}
+        >
+          <RefreshCw className={`h-4 w-4 ${isRefetching ? "animate-spin" : ""}`} />
+          <span className="sr-only">Refresh</span>
+        </Button>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[400px] rounded-md">

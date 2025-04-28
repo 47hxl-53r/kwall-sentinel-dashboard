@@ -142,83 +142,26 @@ export async function apiFetch<T>(
   }
 }
 
-// Mock functions for dashboard components
+/**
+ * Get log statistics from the API
+ */
 export async function getLogStats(): Promise<LogStats> {
-  // Return mock data for now
-  return {
-    stats: {
-      allowed: 120,
-      blocked: 45,
-      blocked_details: [
-        { reason: "Rate Limiting", count: 20 },
-        { reason: "IP Block", count: 15 },
-        { reason: "Rule Violation", count: 10 }
-      ]
-    },
-    chart_data: {
-      labels: ["Allowed", "Blocked", "Rate Limiting", "IP Block", "Rule Violation"],
-      datasets: [
-        {
-          label: "Traffic Distribution",
-          data: [120, 45, 0, 0, 0],
-          backgroundColor: ["#10b981", "#ef4444", "#f59e0b", "#6366f1", "#8b5cf6"]
-        },
-        {
-          label: "Block Reasons",
-          data: [0, 0, 20, 15, 10],
-          backgroundColor: ["#10b981", "#ef4444", "#f59e0b", "#6366f1", "#8b5cf6"]
-        }
-      ]
-    }
-  };
+  return apiFetch<LogStats>("/logs/stats");
 }
 
+/**
+ * Get realtime logs from the API
+ */
 export async function getRealtimeLogs(limit: number = 5, includeServerLogs: boolean = false): Promise<RealtimeLogsResponse> {
-  // Return mock data for now
-  const mockLogs: LogEntry[] = [
-    {
-      timestamp: new Date().toISOString(),
-      timestamp_ns: Date.now() * 1000000,
-      src_ip: "192.168.1.100",
-      dst_ip: "10.0.0.1",
-      src_port: 45678,
-      dst_port: 443,
-      protocol: "TCP",
-      length: 64,
-      action: "ALLOW",
-      reason: "Whitelist match"
-    },
-    {
-      timestamp: new Date(Date.now() - 30000).toISOString(),
-      timestamp_ns: (Date.now() - 30000) * 1000000,
-      src_ip: "192.168.1.105",
-      dst_ip: "10.0.0.2",
-      src_port: 52123,
-      dst_port: 80,
-      protocol: "TCP",
-      length: 128,
-      action: "DENY",
-      reason: "Rate limit exceeded"
-    }
-  ];
-
-  return {
-    logs: mockLogs.slice(0, limit),
-    count: mockLogs.length,
-    server_logs_included: includeServerLogs,
-    total_logs_available: 2
-  };
+  return apiFetch<RealtimeLogsResponse>(`/logs/realtime?limit=${limit}&include_server=${includeServerLogs}`);
 }
 
+/**
+ * Clear logs based on specified options
+ */
 export async function clearLogs(options: ClearLogsOptions): Promise<ClearLogsResponse> {
-  // Mock response for clearing logs
-  return {
-    status: "success",
-    results: {
-      realtime_cleared: options.clearRealtime,
-      blocked_cleared: options.clearBlocked,
-      stats_cleared: options.clearStats,
-      db_stats_cleared: true
-    }
-  };
+  return apiFetch<ClearLogsResponse>("/logs/clear", {
+    method: "POST",
+    body: JSON.stringify(options)
+  });
 }
