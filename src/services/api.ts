@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 
 // API base URL - When using Vite's proxy, we can use relative URLs
@@ -185,7 +184,7 @@ export async function manageWhitelist(operation: "add" | "remove", ip_address: s
 
 // Configuration
 export async function getConfig(type: "lockdown" | "stealth") {
-  return apiFetch<ApiResponse<any>>(`/config/${type}`);
+  return apiFetch<ApiResponse<{status: string}>>(`/config/${type}`);
 }
 
 export async function manageConfig(type: "lockdown" | "stealth", status: "on" | "off") {
