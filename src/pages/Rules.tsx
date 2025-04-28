@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { RuleTable } from "@/components/rules/RuleTable";
 import { RuleForm } from "@/components/rules/RuleForm";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getRules, manageRule, getNextRuleId } from "@/services/api";
+import { getRules, manageRule, getNextRuleId, deleteRule } from "@/services/api";
 import { toast } from "sonner";
 
 interface Rule {
@@ -35,7 +35,7 @@ const Rules = () => {
 
   const mutation = useMutation({
     mutationFn: async (variables: { 
-      operation: "add" | "update" | "delete"; 
+      operation: "add" | "update"; 
       ruleData: Partial<Rule>
     }) => {
       return manageRule(variables.operation, variables.ruleData);
@@ -51,6 +51,19 @@ const Rules = () => {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (ruleId: number) => {
+      return deleteRule(ruleId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rules'] });
+      toast.success("Rule deleted successfully");
+    },
+    onError: (error) => {
+      toast.error("Failed to delete rule");
+    },
+  });
+
   const nextRuleIdQuery = useQuery({
     queryKey: ['nextRuleId'],
     queryFn: getNextRuleId,
@@ -63,10 +76,7 @@ const Rules = () => {
   };
 
   const handleDelete = async (rule_id: number) => {
-    mutation.mutate({ 
-      operation: "delete", 
-      ruleData: { rule_id } 
-    });
+    deleteMutation.mutate(rule_id);
   };
 
   const handleSubmit = async (data: Omit<Rule, "created_at" | "updated_at">) => {
@@ -85,6 +95,10 @@ const Rules = () => {
         return;
       }
     }
+    
+    // Remove created_at and updated_at if they exist
+    if ('created_at' in ruleData) delete ruleData.created_at;
+    if ('updated_at' in ruleData) delete ruleData.updated_at;
     
     mutation.mutate({ 
       operation, 

@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 
 // API base URL - When using Vite's proxy, we can use relative URLs
@@ -94,7 +93,7 @@ export async function getNextRuleId() {
   return apiFetch<{ rule_id: number }>("/rules/next_rule_id");
 }
 
-export async function manageRule(operation: "add" | "update" | "delete", ruleData: any) {
+export async function manageRule(operation: "add" | "update", ruleData: any) {
   return apiFetch<ApiResponse<any>>("/manage", {
     method: "POST",
     body: JSON.stringify({
@@ -103,6 +102,12 @@ export async function manageRule(operation: "add" | "update" | "delete", ruleDat
         ...ruleData,
       },
     }),
+  });
+}
+
+export async function deleteRule(ruleId: number) {
+  return apiFetch<ApiResponse<any>>(`/delete/${ruleId}`, {
+    method: "DELETE",
   });
 }
 

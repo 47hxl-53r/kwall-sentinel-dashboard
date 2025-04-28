@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -10,7 +9,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
-import { toast } from "sonner";
 
 interface Rule {
   rule_id: number;
@@ -28,15 +26,6 @@ export function RuleTable({ rules, onEdit, onDelete }: {
   onEdit: (rule: Rule) => void;
   onDelete: (id: number) => void;
 }) {
-  const handleDelete = async (id: number) => {
-    try {
-      onDelete(id);
-      toast.success("Rule deleted successfully");
-    } catch (error) {
-      toast.error("Failed to delete rule");
-    }
-  };
-
   return (
     <div className="rounded-md border">
       <Table>
@@ -71,7 +60,7 @@ export function RuleTable({ rules, onEdit, onDelete }: {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleDelete(rule.rule_id)}
+                  onClick={() => onDelete(rule.rule_id)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
