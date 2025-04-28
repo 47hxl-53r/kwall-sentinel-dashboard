@@ -6,16 +6,28 @@ export interface User {
 }
 
 export async function login(username: string, password: string): Promise<User | null> {
-  // Test credentials check
-  if (username === "root" && password === "root") {
-    const testUser = { username: "root" };
-    toast.success("Login successful");
-    saveUser(testUser);
-    return testUser;
+  try {
+    // Make a real API call instead of using test credentials
+    const response = await apiFetch<ApiResponse<User>>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    });
+
+    if (response.status === "success" && response.data) {
+      toast.success("Login successful");
+      saveUser(response.data);
+      return response.data;
+    }
+    
+    toast.error("Login failed. Please check your credentials.");
+    return null;
+  } catch (error) {
+    toast.error("Login failed. Please check your credentials.");
+    return null;
   }
-  
-  toast.error("Login failed. Please check your credentials.");
-  return null;
 }
 
 export async function logout(): Promise<boolean> {

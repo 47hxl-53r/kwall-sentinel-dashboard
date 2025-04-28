@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 
 // API base URL - would be configurable in production
@@ -16,12 +17,14 @@ export interface ApiError {
   message: string;
 }
 
-// Fetch options with credentials
+// Updated fetch options with proper CORS handling
 const fetchOptions: RequestInit = {
   credentials: "include", // Include cookies for session-based auth
   headers: {
     "Content-Type": "application/json",
   },
+  // Adding mode: 'cors' explicitly
+  mode: 'cors',
 };
 
 /**
