@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
-import { useToast } from "sonner";
+import { toast } from "sonner";
 
 interface Rule {
   id: string;
@@ -26,8 +26,6 @@ export function RuleTable({ rules, onEdit, onDelete }: {
   onEdit: (rule: Rule) => void;
   onDelete: (id: string) => void;
 }) {
-  const { toast } = useToast();
-
   const handleDelete = async (id: string) => {
     try {
       onDelete(id);
