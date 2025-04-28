@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { LucideIcon } from "lucide-react";
@@ -87,7 +86,7 @@ export const ConfigModeToggle = ({
             You currently have lockdown mode enabled. If you lose access to this dashboard, 
             you can disable lockdown mode using the following command:
             <pre className="mt-2 p-2 bg-black/10 rounded text-xs overflow-x-auto">
-              curl -X POST http://localhost:9877/api/manage -H "Content-Type: application/json" -d '{"config":{"lockdown":"off"}}'
+              curl -X POST http://localhost:9877/api/manage -H "Content-Type: application/json" -d {'{"config":{"lockdown":"off"}}'}
             </pre>
           </AlertDescription>
         </Alert>
