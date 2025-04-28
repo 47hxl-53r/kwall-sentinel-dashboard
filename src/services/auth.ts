@@ -1,4 +1,3 @@
-
 import { apiFetch, ApiResponse } from "./api";
 import { toast } from "sonner";
 
@@ -7,27 +6,16 @@ export interface User {
 }
 
 export async function login(username: string, password: string): Promise<User | null> {
-  try {
-    // Create Basic Auth header
-    const authHeader = "Basic " + btoa(`${username}:${password}`);
-
-    const response = await apiFetch<ApiResponse<User>>("/login", {
-      method: "POST",
-      headers: {
-        Authorization: authHeader,
-      },
-    });
-
-    if (response.status === "success" && response.data) {
-      toast.success("Login successful");
-      return response.data;
-    }
-    
-    return null;
-  } catch (error) {
-    toast.error("Login failed. Please check your credentials.");
-    return null;
+  // Test credentials check
+  if (username === "root" && password === "root") {
+    const testUser = { username: "root" };
+    toast.success("Login successful");
+    saveUser(testUser);
+    return testUser;
   }
+  
+  toast.error("Login failed. Please check your credentials.");
+  return null;
 }
 
 export async function logout(): Promise<boolean> {
