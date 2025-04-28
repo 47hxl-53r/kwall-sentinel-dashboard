@@ -8,20 +8,14 @@ import { RuleTable } from "@/components/rules/RuleTable";
 import { RuleForm } from "@/components/rules/RuleForm";
 import { RuleTemplates } from "@/components/rules/RuleTemplates";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getRules, manageRule, getNextRuleId, deleteRule } from "@/services/api";
+import { getRules, manageRule, getNextRuleId, deleteRule, FirewallRule, applyRuleTemplate } from "@/services/rules-api";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 
-interface Rule {
-  rule_id: number;
-  action: "allow" | "deny";
-  direction: "in" | "out";
-  protocol: "tcp" | "udp" | "all";
-  port: number;
-  host: string;
-  created_at?: string;
-  updated_at?: string;
-}
+// Use the FirewallRule type from rules-api.ts to ensure type compatibility
+type Rule = FirewallRule & {
+  rule_id: number; // Make rule_id required for Rule
+};
 
 const Rules = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -33,7 +27,10 @@ const Rules = () => {
     queryFn: getRules,
   });
 
-  const rules = rulesData.rules || [];
+  // Ensure rules are properly typed with required rule_id
+  const rules = rulesData.rules
+    ? rulesData.rules.filter(rule => rule.rule_id !== undefined) as Rule[]
+    : [];
 
   const mutation = useMutation({
     mutationFn: async (variables: { 
@@ -109,32 +106,16 @@ const Rules = () => {
   };
 
   const handleApplyTemplate = async (templateRules: Omit<Rule, "rule_id" | "created_at" | "updated_at">[]) => {
-    // Process template rules sequentially
-    for (const ruleTemplate of templateRules) {
-      try {
-        // Get next rule ID
-        const response = await nextRuleIdQuery.refetch();
-        if (!response.data) {
-          toast.error("Failed to get next rule ID");
-          return;
-        }
-        
-        const ruleData = { 
-          ...ruleTemplate, 
-          rule_id: response.data.rule_id 
-        };
-        
-        // Add the rule
-        await mutation.mutationFn({ operation: "add", ruleData });
-      } catch (error) {
-        toast.error("Error applying template rule");
-        return;
-      }
+    try {
+      // Use the applyRuleTemplate function instead of processing each rule individually
+      await applyRuleTemplate(templateRules);
+      
+      // Refresh the rules list
+      queryClient.invalidateQueries({ queryKey: ['rules'] });
+      toast.success("Template applied successfully");
+    } catch (error) {
+      toast.error("Error applying template");
     }
-    
-    // Refresh the rules list
-    queryClient.invalidateQueries({ queryKey: ['rules'] });
-    toast.success("Template applied successfully");
   };
 
   return (

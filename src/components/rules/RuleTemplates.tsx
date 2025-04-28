@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Lock, Unlock, Server, Http, Ssh, FileCode } from "lucide-react";
+import { Lock, Unlock, Server, Globe, FileCode, Terminal } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
@@ -33,7 +33,7 @@ export function RuleTemplates({ onApply }: RuleTemplateProps) {
       id: "ssh-server",
       name: "SSH Server",
       description: "Allow SSH connections on port 22",
-      icon: Ssh,
+      icon: Terminal,
       rules: [
         { action: "deny", direction: "in", protocol: "all", port: 0, host: "" },
         { action: "allow", direction: "in", protocol: "tcp", port: 22, host: "" }
@@ -43,7 +43,7 @@ export function RuleTemplates({ onApply }: RuleTemplateProps) {
       id: "http-server",
       name: "HTTP Server",
       description: "Allow HTTP and HTTPS connections (port 80, 443)",
-      icon: Http,
+      icon: Globe,
       rules: [
         { action: "deny", direction: "in", protocol: "all", port: 0, host: "" },
         { action: "allow", direction: "in", protocol: "tcp", port: 80, host: "" },
