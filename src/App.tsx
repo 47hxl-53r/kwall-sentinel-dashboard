@@ -1,4 +1,5 @@
 
+import { ToastProvider } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,20 +22,22 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/rules" element={<Rules />} />
-            <Route path="/whitelist" element={<Whitelist />} />
-            <Route path="/config" element={<Config />} />
-            <Route path="/logs" element={<Logs />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <ToastProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/rules" element={<Rules />} />
+              <Route path="/whitelist" element={<Whitelist />} />
+              <Route path="/config" element={<Config />} />
+              <Route path="/logs" element={<Logs />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </ToastProvider>
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
