@@ -57,15 +57,3 @@ export async function deleteRule(ruleId: number) {
     method: "DELETE",
   });
 }
-
-/**
- * Apply a set of rules (for templates)
- * 
- * @param rules Array of rules to apply
- */
-export async function applyRuleTemplate(rules: FirewallRule[]) {
-  return apiFetch<ApiResponse<any>>("/rules/template", {
-    method: "POST",
-    body: JSON.stringify({ rules }),
-  });
-}
