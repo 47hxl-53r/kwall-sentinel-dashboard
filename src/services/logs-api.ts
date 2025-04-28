@@ -1,6 +1,8 @@
 
 import { apiFetch, ApiResponse, LogEntry, RealtimeLogsResponse, BlockedLogsResponse, LogStats, ClearLogsResponse } from "./api";
 
+export type { LogEntry, RealtimeLogsResponse, BlockedLogsResponse, LogStats, ClearLogsResponse };
+
 /**
  * Retrieves real-time logs from the server
  * 
