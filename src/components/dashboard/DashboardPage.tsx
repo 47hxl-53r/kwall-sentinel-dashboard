@@ -2,7 +2,6 @@
 import { useEffect } from "react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { StatsOverview } from "./StatsOverview";
-import { TrafficCharts } from "./TrafficCharts";
 import { RecentActivity } from "./RecentActivity";
 import { QuickActions } from "./QuickActions";
 import { getLogStats } from "@/services/api";
@@ -41,8 +40,6 @@ export function DashboardPage() {
         <>
           <StatsOverview stats={logStats?.stats} />
           
-          <TrafficCharts chartData={logStats?.chart_data} />
-
           <div className="grid gap-4 md:grid-cols-2">
             <RecentActivity />
             <QuickActions />
