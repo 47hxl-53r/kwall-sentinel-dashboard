@@ -9,6 +9,7 @@ export interface ApiResponse<T> {
   status: "success" | "error";
   message: string;
   data?: T;
+  user?: string; // Added user field to match server response
 }
 
 // API error interface

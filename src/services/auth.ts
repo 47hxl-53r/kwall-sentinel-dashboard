@@ -16,10 +16,20 @@ export async function login(username: string, password: string): Promise<User | 
       }),
     });
 
-    if (response.status === "success" && response.data) {
-      toast.success("Login successful");
-      saveUser(response.data);
-      return response.data;
+    // Check for success response and handle the server's format where username is in response.user
+    if (response.status === "success") {
+      // Create a proper User object from the response.user string
+      if (response.user) {
+        const user: User = { username: response.user };
+        toast.success("Login successful");
+        saveUser(user);
+        return user;
+      } else if (response.data) {
+        // Fallback to the original format if it exists
+        toast.success("Login successful");
+        saveUser(response.data);
+        return response.data;
+      }
     }
     
     toast.error("Login failed. Please check your credentials.");
