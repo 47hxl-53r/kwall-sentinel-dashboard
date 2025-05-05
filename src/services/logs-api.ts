@@ -10,7 +10,7 @@ export interface Log {
   dst_ip: string;
   src_port: number;
   dst_port: number;
-  protocol: "TCP" | "UDP" | "ICMP" | "2" | "6" | "17" | "1";
+  protocol: "TCP" | "UDP" | "ICMP" | "2" | "6" | "17" | "1" | "4";
   length: number;
   action: "ALLOW" | "DENY";
   reason: string;
@@ -42,7 +42,8 @@ export interface LogsFilterParams {
 // Map numeric protocol codes to their string representations
 export const protocolMap: Record<string, string> = {
   "1": "ICMP",
-  "2": "TCP", // IGMP is actually 2, but based on your comment we're mapping it to TCP
+  "2": "IGMP",
+  "4": "IP", // Adding IP protocol (4)
   "6": "TCP",
   "17": "UDP"
 };
