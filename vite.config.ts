@@ -8,7 +8,7 @@ import { componentTagger } from "lovable-tagger";
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
-    port: 8080, // Updated port to 8080 as requested
+    port: 9877, // Updated port to 9877 as requested (previously 8080)
     proxy: {
       // Proxy all /api requests to the backend server
       "/api": {
