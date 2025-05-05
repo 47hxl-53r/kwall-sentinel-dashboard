@@ -10,7 +10,7 @@ export interface Log {
   dst_ip: string;
   src_port: number;
   dst_port: number;
-  protocol: "TCP" | "UDP" | "ICMP";
+  protocol: "TCP" | "UDP" | "ICMP" | "2" | "6" | "17" | "1";
   length: number;
   action: "ALLOW" | "DENY";
   reason: string;
@@ -28,8 +28,8 @@ export interface LogsAllResponse {
 export interface LogsFilterParams {
   limit?: number;
   offset?: number;
-  action?: "ALLOW" | "DENY";
-  protocol?: "TCP" | "UDP" | "ICMP";
+  action?: "ALLOW" | "DENY" | "all";
+  protocol?: "TCP" | "UDP" | "ICMP" | "all";
   src_ip?: string;
   dst_ip?: string;
   min_port?: number;
@@ -39,12 +39,24 @@ export interface LogsFilterParams {
   srv?: boolean;
 }
 
+// Map numeric protocol codes to their string representations
+export const protocolMap: Record<string, string> = {
+  "1": "ICMP",
+  "2": "TCP", // IGMP is actually 2, but based on your comment we're mapping it to TCP
+  "6": "TCP",
+  "17": "UDP"
+};
+
+export function getProtocolDisplay(protocol: string): string {
+  return protocolMap[protocol] || protocol;
+}
+
 export async function getAllLogs(params: LogsFilterParams = {}): Promise<LogsAllResponse> {
   const queryParams = new URLSearchParams();
   
   // Add all non-null params to the query string
   Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
+    if (value !== undefined && value !== null && value !== "all") {
       queryParams.append(key, String(value));
     }
   });
@@ -83,9 +95,14 @@ export async function getBlockedLogs(limit: number = 100): Promise<{
   }>(`/logs/blocked?limit=${limit}`);
 }
 
-export async function clearAllLogs(): Promise<{ success: boolean, message: string }> {
-  // Using apiFetch properly to send the request to the API server
-  return apiFetch<{ success: boolean, message: string }>('/logs/clear', {
+export interface ClearLogsResponse {
+  status: string;
+  message: string;
+}
+
+export async function clearAllLogs(): Promise<ClearLogsResponse> {
+  // Updated to expect the correct response format
+  return apiFetch<ClearLogsResponse>('/logs/clear', {
     method: 'DELETE',
   });
 }
