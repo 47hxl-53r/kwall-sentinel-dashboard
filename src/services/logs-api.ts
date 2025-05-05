@@ -84,6 +84,7 @@ export async function getBlockedLogs(limit: number = 100): Promise<{
 }
 
 export async function clearAllLogs(): Promise<{ success: boolean, message: string }> {
+  // Using apiFetch properly to send the request to the API server
   return apiFetch<{ success: boolean, message: string }>('/logs/clear', {
     method: 'DELETE',
   });
