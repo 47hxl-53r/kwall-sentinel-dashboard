@@ -8,6 +8,7 @@ import {
   List,
   Settings,
   Home,
+  Database,
 } from "lucide-react";
 
 const navItems = [
@@ -25,6 +26,11 @@ const navItems = [
     title: "Whitelist",
     icon: List,
     href: "/whitelist",
+  },
+  {
+    title: "Logs",
+    icon: Database,
+    href: "/logs",
   },
   {
     title: "Configuration",

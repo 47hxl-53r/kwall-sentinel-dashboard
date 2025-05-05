@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Rules from "./pages/Rules";
 import Whitelist from "./pages/Whitelist";
+import Logs from "./pages/Logs";
 import Config from "./pages/Config";
 import NotFound from "./pages/NotFound";
 
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/rules" element={<Rules />} />
               <Route path="/whitelist" element={<Whitelist />} />
+              <Route path="/logs" element={<Logs />} />
               <Route path="/config" element={<Config />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
