@@ -5,6 +5,7 @@ import { toast } from "sonner";
 export * from "./config-api";
 export * from "./rules-api";
 export * from "./whitelist-api";
+export * from "./logs-api"; // Added this export to include getProtocolDisplay
 
 // API base URL - When using Vite's proxy, we can use relative URLs
 const API_BASE_URL = "/api";
