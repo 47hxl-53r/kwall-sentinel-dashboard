@@ -6,7 +6,6 @@ import { LogsTable } from "@/components/logs/LogsTable";
 import { LogsFilter } from "@/components/logs/LogsFilter";
 import { LogsTabs } from "@/components/logs/LogsTabs";
 import { getAllLogs, getRealtimeLogs, getBlockedLogs, LogsFilter as LogsFilterType } from "@/services/logs-api";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 
