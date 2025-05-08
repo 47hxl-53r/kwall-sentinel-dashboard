@@ -6,8 +6,8 @@ import { apiFetch, ApiResponse } from "./api";
  * 
  * @param type Configuration type ("lockdown" or "stealth")
  */
-export async function getConfig(type: "lockdown" | "stealth"): Promise<ApiResponse<{status: string}>> {
-  return apiFetch<ApiResponse<{status: string}>>(`/config/${type}`);
+export async function getConfig(type: "lockdown" | "stealth"): Promise<{config_type: string, status: string, updated_at: string}> {
+  return apiFetch<{config_type: string, status: string, updated_at: string}>(`/config/${type}`);
 }
 
 /**

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 interface ConfirmationDialogProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ interface ConfirmationDialogProps {
   icon: React.ReactNode;
   onConfirm: () => Promise<void>;
   variant?: "destructive" | "default";
+  isLoading?: boolean;
 }
 
 export const ConfirmationDialog = ({
@@ -23,7 +25,8 @@ export const ConfirmationDialog = ({
   description,
   icon,
   onConfirm,
-  variant = "default"
+  variant = "default",
+  isLoading = false
 }: ConfirmationDialogProps) => {
   const [confirmText, setConfirmText] = useState("");
 
@@ -57,17 +60,26 @@ export const ConfirmationDialog = ({
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}
             placeholder="Type 'yes' to confirm"
+            disabled={isLoading}
           />
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => setIsOpen(false)}>
+          <Button variant="ghost" onClick={() => setIsOpen(false)} disabled={isLoading}>
             Cancel
           </Button>
           <Button
             variant={variant}
             onClick={handleConfirm}
+            disabled={isLoading || confirmText.toLowerCase() !== "yes"}
           >
-            Confirm
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              "Confirm"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

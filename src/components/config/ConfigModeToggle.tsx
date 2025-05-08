@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { LucideIcon } from "lucide-react";
@@ -32,6 +33,7 @@ export const ConfigModeToggle = ({
 }: ConfigModeToggleProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [pendingState, setPendingState] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   const handleToggleClick = (enabled: boolean) => {
     setPendingState(enabled);
@@ -39,6 +41,7 @@ export const ConfigModeToggle = ({
   };
 
   const handleConfirm = async () => {
+    setIsLoading(true);
     try {
       await manageConfig(name, pendingState ? "on" : "off");
       onStatusChange(pendingState);
@@ -55,6 +58,8 @@ export const ConfigModeToggle = ({
       setIsDialogOpen(false);
     } catch (error) {
       toast.error(`Failed to update ${name} mode`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -74,6 +79,7 @@ export const ConfigModeToggle = ({
           checked={isEnabled}
           onCheckedChange={handleToggleClick}
           className={isEnabled && name === "lockdown" ? "bg-deny" : ""}
+          disabled={isLoading}
         />
       </div>
 
@@ -101,6 +107,7 @@ export const ConfigModeToggle = ({
           pendingState ? enableMessage : disableMessage}
         icon={<Icon className={`h-5 w-5 ${iconClassName}`} />}
         onConfirm={handleConfirm}
+        isLoading={isLoading}
       />
     </>
   );
