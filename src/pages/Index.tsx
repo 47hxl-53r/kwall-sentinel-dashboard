@@ -17,7 +17,7 @@ const Index = () => {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center">
         <div className="h-12 w-12 rounded-full border-4 border-primary border-t-transparent animate-spin mx-auto mb-4"></div>
-        <h1 className="text-2xl font-bold">K-Wall Sentinel Dashboard</h1>
+        <h1 className="text-2xl font-bold">KWall Dashboard</h1>
         <p className="text-muted-foreground">Loading...</p>
       </div>
     </div>

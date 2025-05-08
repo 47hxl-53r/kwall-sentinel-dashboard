@@ -36,7 +36,7 @@ export function LoginForm() {
         <div className="flex justify-center mb-2">
           <Shield className="h-12 w-12 text-primary" />
         </div>
-        <CardTitle className="text-2xl font-display">K-Wall</CardTitle>
+        <CardTitle className="text-2xl font-display">KWall</CardTitle>
         <CardDescription>Enter your credentials to access the dashboard</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
@@ -93,4 +93,3 @@ export function LoginForm() {
     </Card>
   );
 }
-
