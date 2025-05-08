@@ -15,16 +15,17 @@ export function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setIsLoading(true);
-
+    // Don't clear the error until we get a successful response
+    
     try {
       const success = await login(username, password);
       if (!success) {
         setError("Invalid credentials. Please try again.");
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      setError("An error occurred during login. Please try again.");
+      console.error("Login error:", err);
     } finally {
       setIsLoading(false);
     }
