@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Shield } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 export function LoginForm() {
   const [username, setUsername] = useState("");
@@ -15,8 +16,15 @@ export function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(""); // Clear previous errors
+    
+    // Form validation
+    if (!username.trim() || !password.trim()) {
+      setError("Please fill out all fields.");
+      return;
+    }
+    
     setIsLoading(true);
-    // Don't clear the error until we get a successful response
     
     try {
       const success = await login(username, password);
@@ -40,14 +48,14 @@ export function LoginForm() {
         <CardTitle className="text-2xl font-display">KWall</CardTitle>
         <CardDescription>Enter your credentials to access the dashboard</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <CardContent className="space-y-4">
           {error && <div className="p-3 text-sm rounded-md bg-destructive/10 text-destructive">{error}</div>}
           
           <div className="space-y-2">
-            <label htmlFor="username" className="text-sm font-medium">
+            <Label htmlFor="username" className="text-sm font-medium">
               Username
-            </label>
+            </Label>
             <Input
               id="username"
               type="text"
@@ -60,9 +68,9 @@ export function LoginForm() {
           </div>
           
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium">
+            <Label htmlFor="password" className="text-sm font-medium">
               Password
-            </label>
+            </Label>
             <Input
               id="password"
               type="password"
