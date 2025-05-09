@@ -1,5 +1,7 @@
 
+import * as z from "zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,6 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 
 interface RuleFormData {
   rule_id?: number;
@@ -33,8 +37,19 @@ interface RuleFormProps {
   onCancel: () => void;
 }
 
+// Define validation schema
+const ruleFormSchema = z.object({
+  rule_id: z.number().optional(),
+  action: z.enum(["allow", "deny"]),
+  direction: z.enum(["in", "out"]),
+  protocol: z.enum(["tcp", "udp", "all"]),
+  port: z.number().min(0).max(65535),
+  host: z.string().min(1, "Host is required"),
+});
+
 export function RuleForm({ initialData, onSubmit, onCancel }: RuleFormProps) {
-  const form = useForm<RuleFormData>({
+  const form = useForm<z.infer<typeof ruleFormSchema>>({
+    resolver: zodResolver(ruleFormSchema),
     defaultValues: initialData || {
       action: "allow",
       direction: "in",
@@ -44,9 +59,26 @@ export function RuleForm({ initialData, onSubmit, onCancel }: RuleFormProps) {
     },
   });
 
+  const isSubmitSuccessful = form.formState.isSubmitSuccessful;
+  const errors = form.formState.errors;
+  const hasErrors = Object.keys(errors).length > 0;
+
+  const handleFormSubmit = (data: z.infer<typeof ruleFormSchema>) => {
+    onSubmit(data as RuleFormData);
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
+        {hasErrors && !isSubmitSuccessful && (
+          <Alert variant="destructive" className="mb-4">
+            <Info className="h-4 w-4 mr-2" />
+            <AlertDescription>
+              Please fill out all required fields correctly before submitting.
+            </AlertDescription>
+          </Alert>
+        )}
+
         <FormField
           control={form.control}
           name="action"
@@ -126,7 +158,7 @@ export function RuleForm({ initialData, onSubmit, onCancel }: RuleFormProps) {
                   min={0}
                   max={65535}
                   {...field}
-                  onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                  onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
                 />
               </FormControl>
               <FormMessage />
