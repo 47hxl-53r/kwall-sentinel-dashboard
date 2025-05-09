@@ -8,6 +8,7 @@ export interface User {
 
 export async function login(username: string, password: string): Promise<User | null> {
   try {
+    console.log("Auth service: login attempt for", username);
     const response = await apiFetch<ApiResponse<User>>("/auth/login", {
       method: "POST",
       headers: {
@@ -39,9 +40,11 @@ export async function login(username: string, password: string): Promise<User | 
       }
     }
     
+    console.log("Login failed in auth service");
     toast.error("Login failed. Please check your credentials.");
     return null;
   } catch (error) {
+    console.error("Login error in auth service:", error);
     toast.error("Login failed. Please check your credentials.");
     return null;
   }

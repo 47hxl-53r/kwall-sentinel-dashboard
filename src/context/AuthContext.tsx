@@ -36,12 +36,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (username: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     try {
+      console.log("Auth context: login attempt");
       const user = await apiLogin(username, password);
       if (user) {
         setUser(user);
         saveUser(user);
         return true;
       }
+      console.log("Auth context: login failed");
       return false;
     } finally {
       setIsLoading(false);
@@ -53,7 +55,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await apiLogout();
     setUser(null);
     setIsLoading(false);
-    window.location.href = "/login";
+    
+    // Use react-router's navigate instead of directly changing window.location
+    // to prevent a full page reload
+    // window.location.href = "/login"; - This causes a full page reload
   };
 
   return (

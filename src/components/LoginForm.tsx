@@ -27,13 +27,15 @@ export function LoginForm() {
     setIsLoading(true);
     
     try {
+      console.log("Attempting login with:", username);
       const success = await login(username, password);
+      console.log("Login attempt result:", success);
       if (!success) {
         setError("Invalid credentials. Please try again.");
       }
     } catch (err) {
-      setError("An error occurred during login. Please try again.");
       console.error("Login error:", err);
+      setError("An error occurred during login. Please try again.");
     } finally {
       setIsLoading(false);
     }
