@@ -3,18 +3,23 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { LogOut, Bell, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { format } from "date-fns";
+import { formatToIST } from "@/lib/format";
 
 export function Header() {
   const { user, logout } = useAuth();
   const [alertCount] = useState(1); // Set notification count to 1
-  const [lastLoginTime] = useState(new Date()); // Current time as the login time
+  const [loginTime, setLoginTime] = useState(new Date());
+
+  // Set the login time when component mounts
+  useEffect(() => {
+    setLoginTime(new Date());
+  }, []);
 
   return (
     <header className="h-16 border-b border-border bg-card flex items-center justify-between px-4 md:px-6">
@@ -46,9 +51,9 @@ export function Header() {
                     <Bell className="h-4 w-4 text-primary" />
                   </div>
                   <div className="space-y-1 flex-1">
-                    <p className="text-sm font-medium">Someone just logged in</p>
+                    <p className="text-sm font-medium">You logged in successfully</p>
                     <p className="text-xs text-muted-foreground">
-                      {format(lastLoginTime, "MMM d, yyyy 'at' h:mm a")}
+                      {formatToIST(loginTime)}
                     </p>
                   </div>
                 </div>

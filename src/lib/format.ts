@@ -14,3 +14,21 @@ export function formatLogDate(timestamp: string): string {
     hour12: false
   });
 }
+
+/**
+ * Format a date to Indian Standard Time (IST)
+ */
+export function formatToIST(date: Date): string {
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+    timeZone: 'Asia/Kolkata'
+  };
+  
+  return new Intl.DateTimeFormat('en-IN', options).format(date) + ' IST';
+}
